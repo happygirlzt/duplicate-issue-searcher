@@ -12077,6 +12077,10 @@ function bm25f(existingIssue, issue, k1, b, k3, fields) {
   let avgDocLength = 0;
 
   for (const field in fields) {
+    // check whether the field is null
+    if (!existingIssue[field]) {
+      existingIssue[field] = '';
+    }
     avgDocLength += existingIssue[field].length;
   }
 
@@ -12086,7 +12090,11 @@ function bm25f(existingIssue, issue, k1, b, k3, fields) {
     let fieldScores = [];
 
     for (const field in fields) {
+      if (!existingIssue[field]) {
+        existingIssue[field] = '';        
+      }
       let fieldLength = existingIssue[field].length;
+      
       let termFrequency = existingIssue[field].split(" ").filter(word => word === term).length;
       let numerator = (k1 + 1) * termFrequency;
       let denominator = k1 * ((1 - b) + b * (fieldLength / avgDocLength)) + termFrequency;
