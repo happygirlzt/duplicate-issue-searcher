@@ -151,33 +151,29 @@ function checkMentioned(showMentioned, body, number, owner, repo) {
 function bm25f(existingIssue, issue, k1, b, k3, fields) {
   let score = 0;
   let avgDocLength = 0;
+  let avgQueryLength = 0;
 
   for (const field in fields) {
-    // check whether the field is null
     if (!existingIssue[field]) {
       existingIssue[field] = '';
     }
+    if (!issue[field]) {
+      issue[field] = '';
+    }
     avgDocLength += existingIssue[field].length;
+    avgQueryLength += issue[field].length;
   }
 
   avgDocLength /= fields.length;
+  avgQueryLength /= fields.length;
 
-  for (const term of issue) {
-    let fieldScores = [];
-
-    for (const field in fields) {
-      if (!existingIssue[field]) {
-        existingIssue[field] = '';        
-      }
-      let fieldLength = existingIssue[field].length;
-      
-      let termFrequency = existingIssue[field].split(" ").filter(word => word === term).length;
-      let numerator = (k1 + 1) * termFrequency;
-      let denominator = k1 * ((1 - b) + b * (fieldLength / avgDocLength)) + termFrequency;
-      fieldScores.push((numerator / denominator) * (k3 + 1));
-    }
-
-    score += Math.max(...fieldScores);
+  for (const field in fields) {
+    let fieldLength = existingIssue[field].length;
+    let queryLength = issue[field].length;
+    let termFrequency = existingIssue[field].split(" ").filter(word => issue[field].includes(word)).length;
+    let numerator = (k1 + 1) * termFrequency;
+    let denominator = k1 * ((1 - b) + b * (fieldLength / avgDocLength)) + termFrequency;
+    score += (numerator / denominator) * ((k3 + 1) * queryLength / avgQueryLength);
   }
 
   return score;
