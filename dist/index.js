@@ -12113,9 +12113,7 @@ function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b
   for (const pastIssue of existingIssues) {
     scores.push({
       score: bm25f(pastIssue, currentIssue, k1, b, k3, fields),
-      issue_title: pastIssue.title,
-      issue_number: pastIssue.number,
-      issue_body: pastIssue.body
+      issue: pastIssue 
     });
   }
 
@@ -12412,8 +12410,9 @@ async function run() {
 
       if (mostSimilar) {
         for (const returnedIssue of mostSimilar) {
+          console.log('returnedIssue', returnedIssue);
           console.log('returnedIssue', returnedIssue.score);
-          console.log('returnedIssue title ', returnedIssue.title);
+          console.log('returnedIssue title ', returnedIssue.issue);
           result.push({
             number: returnedIssue.number,
             title: returnedIssue.title,

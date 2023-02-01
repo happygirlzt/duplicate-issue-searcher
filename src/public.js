@@ -189,9 +189,7 @@ function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b
   for (const pastIssue of existingIssues) {
     scores.push({
       score: bm25f(pastIssue, currentIssue, k1, b, k3, fields),
-      issue_title: pastIssue.title,
-      issue_number: pastIssue.number,
-      issue_body: pastIssue.body
+      issue: pastIssue 
     });
   }
 
