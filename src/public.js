@@ -185,7 +185,10 @@ function getNandAvdl(docs) {
 
   docs.forEach(doc => {
       let length = 0;
-      for (let field in doc) {
+    for (let field in doc) {
+      if (!doc[field]) {
+        doc[field] = '';
+        }
           if (doc.hasOwnProperty(field)) {
               length += doc[field].split(" ").length;
           }
