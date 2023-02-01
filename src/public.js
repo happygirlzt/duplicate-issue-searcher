@@ -147,6 +147,50 @@ function checkMentioned(showMentioned, body, number, owner, repo) {
   return true;
 }
 
+
+function bm25f(existingIssue, issue, k1, b, k3, fields) {
+  let score = 0;
+  let avgDocLength = 0;
+
+  for (const field in fields) {
+    avgDocLength += existingIssue[field].length;
+  }
+
+  avgDocLength /= fields.length;
+
+  for (const term of issue) {
+    let fieldScores = [];
+
+    for (const field in fields) {
+      let fieldLength = existingIssue[field].length;
+      let termFrequency = existingIssue[field].split(" ").filter(word => word === term).length;
+      let numerator = (k1 + 1) * termFrequency;
+      let denominator = k1 * ((1 - b) + b * (fieldLength / avgDocLength)) + termFrequency;
+      fieldScores.push((numerator / denominator) * (k3 + 1));
+    }
+
+    score += Math.max(...fieldScores);
+  }
+
+  return score;
+}
+
+function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b=0.75, k3=8) {
+  let scores = [];
+  let fields = ['title', 'body'];
+  for (const pastIssue of existingIssues) {
+    scores.push({
+      score: bm25f(pastIssue, currentIssue, k1, b, k3, fields),
+      pastIssue
+    });
+  }
+
+  scores.sort((a, b) => b.score - a.score);
+  return scores.slice(0, Math.min(5, corpus.length)).map(score => score.pastIssue);
+}
+
+
+
 // ************************************************
 module.exports = {
   queryIssues,
@@ -155,4 +199,6 @@ module.exports = {
   doRemoveIssueComment,
   removeEmoji,
   checkMentioned,
+  bm25f,
+  findMostSimilarWithCurrentIssue
 };

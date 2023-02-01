@@ -11,6 +11,7 @@ const {
   doIssueComment,
   checkMentioned,
   doRemoveIssueComment,
+  findMostSimilarWithCurrentIssue
 } = require('./public');
 
 const { dealStringToArr } = require('actions-util');
@@ -57,25 +58,38 @@ async function run() {
       }
 
       const result = [];
+      const existingIssues = [];
       issues.forEach(issue => {
         if (issue.pull_request === undefined && issue.number !== number) {
           const formatIssT = formatTitle(dealStringToArr(titleExcludes), issue.title);
           if (formatIssT.length > 0) {
-            const similarity = compare(formatIssT, formatT);
-            if (
-              similarity &&
-              similarity >= filterThreshold &&
-              checkMentioned(showMentioned, body, issue.number, owner, repo)
-            ) {
-              result.push({
-                number: issue.number,
-                title: issue.title,
-                similarity: Number(similarity.toFixed(2)),
-              });
-            }
+            existingIssues.push(issue);
+            // const similarity = compare(formatIssT, formatT);
+            // if (
+            //   similarity &&
+            //   similarity >= filterThreshold &&
+            //   checkMentioned(showMentioned, body, issue.number, owner, repo)
+            // ) {
+            //   result.push({
+            //     number: issue.number,
+            //     title: issue.title,
+            //     similarity: Number(similarity.toFixed(2)),
+            //   });
+            // }
           }
         }
       });
+
+      const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+      if (mostSimilar) {
+        for (let i = 0; i < mostSimilar.length; i++) {
+          result.push({
+            number: mostSimilar[i].number,
+            title: mostSimilar[i].title,
+            similarity: Number(mostSimilar[i].similarity.toFixed(2)),
+          });
+        }
+      }
 
       core.info(`[Action][filter-issues][length: ${result.length}]`);
       if (result.length > 0) {
