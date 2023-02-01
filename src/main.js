@@ -89,7 +89,8 @@ async function run() {
         'title': 3,
         'body': 1
       };
-      const returned = getNandAvdl(existingIssues, fieldWeights);
+
+      const returned = getNandAvdl(existingIssues);
       const n = returned.n;
       const avdl = returned.avdl;
 
