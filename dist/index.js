@@ -12071,6 +12071,50 @@ function checkMentioned(showMentioned, body, number, owner, repo) {
   return true;
 }
 
+
+function bm25f(existingIssue, issue, k1, b, k3, fields) {
+  let score = 0;
+  let avgDocLength = 0;
+
+  for (const field in fields) {
+    avgDocLength += existingIssue[field].length;
+  }
+
+  avgDocLength /= fields.length;
+
+  for (const term of issue) {
+    let fieldScores = [];
+
+    for (const field in fields) {
+      let fieldLength = existingIssue[field].length;
+      let termFrequency = existingIssue[field].split(" ").filter(word => word === term).length;
+      let numerator = (k1 + 1) * termFrequency;
+      let denominator = k1 * ((1 - b) + b * (fieldLength / avgDocLength)) + termFrequency;
+      fieldScores.push((numerator / denominator) * (k3 + 1));
+    }
+
+    score += Math.max(...fieldScores);
+  }
+
+  return score;
+}
+
+function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b=0.75, k3=8) {
+  let scores = [];
+  let fields = ['title', 'body'];
+  for (const pastIssue of existingIssues) {
+    scores.push({
+      score: bm25f(pastIssue, currentIssue, k1, b, k3, fields),
+      pastIssue
+    });
+  }
+
+  scores.sort((a, b) => b.score - a.score);
+  return scores.slice(0, Math.min(5, corpus.length)).map(score => score.pastIssue);
+}
+
+
+
 // ************************************************
 module.exports = {
   queryIssues,
@@ -12079,6 +12123,8 @@ module.exports = {
   doRemoveIssueComment,
   removeEmoji,
   checkMentioned,
+  bm25f,
+  findMostSimilarWithCurrentIssue
 };
 
 
@@ -12274,6 +12320,7 @@ const {
   doIssueComment,
   checkMentioned,
   doRemoveIssueComment,
+  findMostSimilarWithCurrentIssue
 } = __nccwpck_require__(9345);
 
 const { dealStringToArr } = __nccwpck_require__(4971);
@@ -12320,25 +12367,38 @@ async function run() {
       }
 
       const result = [];
+      const existingIssues = [];
       issues.forEach(issue => {
         if (issue.pull_request === undefined && issue.number !== number) {
           const formatIssT = formatTitle(dealStringToArr(titleExcludes), issue.title);
           if (formatIssT.length > 0) {
-            const similarity = compare(formatIssT, formatT);
-            if (
-              similarity &&
-              similarity >= filterThreshold &&
-              checkMentioned(showMentioned, body, issue.number, owner, repo)
-            ) {
-              result.push({
-                number: issue.number,
-                title: issue.title,
-                similarity: Number(similarity.toFixed(2)),
-              });
-            }
+            existingIssues.push(issue);
+            // const similarity = compare(formatIssT, formatT);
+            // if (
+            //   similarity &&
+            //   similarity >= filterThreshold &&
+            //   checkMentioned(showMentioned, body, issue.number, owner, repo)
+            // ) {
+            //   result.push({
+            //     number: issue.number,
+            //     title: issue.title,
+            //     similarity: Number(similarity.toFixed(2)),
+            //   });
+            // }
           }
         }
       });
+
+      const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+      if (mostSimilar) {
+        for (let i = 0; i < mostSimilar.length; i++) {
+          result.push({
+            number: mostSimilar[i].number,
+            title: mostSimilar[i].title,
+            similarity: Number(mostSimilar[i].similarity.toFixed(2)),
+          });
+        }
+      }
 
       core.info(`[Action][filter-issues][length: ${result.length}]`);
       if (result.length > 0) {
