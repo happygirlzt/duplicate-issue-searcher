@@ -11,7 +11,9 @@ const {
   doIssueComment,
   checkMentioned,
   doRemoveIssueComment,
-  findMostSimilarWithCurrentIssue
+  getNandAvdl,
+  my_bm25f
+  // findMostSimilarWithCurrentIssue
 } = require('./public');
 
 const { dealStringToArr } = require('actions-util');
@@ -95,7 +97,7 @@ async function run() {
       const avdl = returned.avdl;
 
       // const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
-      const mostSimilar = bm25f(existingIssues, formatT, fieldWeights, n, avdl)
+      const mostSimilar = my_bm25f(existingIssues, formatT, fieldWeights, n, avdl)
       console.log(mostSimilar);
 
       if (mostSimilar) {

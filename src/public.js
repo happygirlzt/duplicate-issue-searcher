@@ -197,7 +197,7 @@ function getNandAvdl(docs) {
   return {N: N, avdl: avdl};
 }
 
-function bm25f(docs, query,fieldsWeights,  N, avdl, k1=1.2, b=0.75, k3=8) {
+function my_bm25f(docs, query,fieldsWeights,  N, avdl, k1=1.2, b=0.75, k3=8) {
   let scores = [];
   let queryTerms = query.split(" ");
 
@@ -266,6 +266,6 @@ module.exports = {
   removeEmoji,
   checkMentioned,
   getNandAvdl,
-  bm25f
+  my_bm25f
   // findMostSimilarWithCurrentIssue
 };
