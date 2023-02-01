@@ -85,12 +85,13 @@ async function run() {
       });
 
       const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+      console.log(mostSimilar);
 
       if (mostSimilar) {
         for (const returnedIssue of mostSimilar) {
           console.log('returnedIssue', returnedIssue);
-          console.log('returnedIssue', returnedIssue.score);
-          console.log('returnedIssue title ', returnedIssue.issue);
+          console.log('returnedIssue score', returnedIssue.score);
+          console.log('returnedIssue title ', returnedIssue.issue.title);
           result.push({
             number: returnedIssue.number,
             title: returnedIssue.title,

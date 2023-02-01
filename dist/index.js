@@ -12112,7 +12112,10 @@ function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b
       issue: pastIssue 
     });
   }
-
+  console.log('***' * 10);
+  console.log(scores);
+  console.log('***' * 10);
+  
   scores.sort((a, b) => b.score - a.score);
   // return scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue);
   // return {
@@ -12403,12 +12406,13 @@ async function run() {
       });
 
       const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+      console.log(mostSimilar);
 
       if (mostSimilar) {
         for (const returnedIssue of mostSimilar) {
           console.log('returnedIssue', returnedIssue);
-          console.log('returnedIssue', returnedIssue.score);
-          console.log('returnedIssue title ', returnedIssue.issue);
+          console.log('returnedIssue score', returnedIssue.score);
+          console.log('returnedIssue title ', returnedIssue.issue.title);
           result.push({
             number: returnedIssue.number,
             title: returnedIssue.title,
