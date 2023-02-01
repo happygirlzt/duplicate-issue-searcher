@@ -148,58 +148,112 @@ function checkMentioned(showMentioned, body, number, owner, repo) {
 }
 
 
-function bm25f(existingIssue, issue, k1, b, k3, fields) {
-  let score = 0;
-  let avgDocLength = 0;
-  let avgQueryLength = 0;
+// function bm25f(existingIssue, issue, k1, b, k3, fields) {
+//   let score = 0;
+//   let avgDocLength = 0;
+//   let avgQueryLength = 0;
 
-  for (const field in fields) {
-    if (!existingIssue[field]) {
-      existingIssue[field] = '';
-    }
-    if (!issue[field]) {
-      issue[field] = '';
-    }
-    avgDocLength += existingIssue[field].length;
-    avgQueryLength += issue[field].length;
-  }
+//   for (const field in fields) {
+//     if (!existingIssue[field]) {
+//       existingIssue[field] = '';
+//     }
+//     if (!issue[field]) {
+//       issue[field] = '';
+//     }
+//     avgDocLength += existingIssue[field].length;
+//     avgQueryLength += issue[field].length;
+//   }
 
-  avgDocLength /= fields.length;
-  avgQueryLength /= fields.length;
+//   avgDocLength /= fields.length;
+//   avgQueryLength /= fields.length;
 
-  for (const field in fields) {
-    let fieldLength = existingIssue[field].length;
-    let queryLength = issue[field].length;
-    let termFrequency = existingIssue[field].split(" ").filter(word => issue[field].includes(word)).length;
-    let numerator = (k1 + 1) * termFrequency;
-    let denominator = k1 * ((1 - b) + b * (fieldLength / avgDocLength)) + termFrequency;
-    score += (numerator / denominator) * ((k3 + 1) * queryLength / avgQueryLength);
-  }
+//   for (const field in fields) {
+//     let fieldLength = existingIssue[field].length;
+//     let queryLength = issue[field].length;
+//     let termFrequency = existingIssue[field].split(" ").filter(word => issue[field].includes(word)).length;
+//     let numerator = (k1 + 1) * termFrequency;
+//     let denominator = k1 * ((1 - b) + b * (fieldLength / avgDocLength)) + termFrequency;
+//     score += (numerator / denominator) * ((k3 + 1) * queryLength / avgQueryLength);
+//   }
 
-  return score;
+//   return score;
+// }
+
+function getNandAvdl(docs) {
+  let N = docs.length;
+  let sumOfLengths = 0;
+
+  docs.forEach(doc => {
+      let length = 0;
+      for (let field in doc) {
+          if (doc.hasOwnProperty(field)) {
+              length += doc[field].split(" ").length;
+          }
+      }
+      sumOfLengths += length;
+  });
+
+  let avdl = sumOfLengths / N;
+  return {N: N, avdl: avdl};
 }
 
-function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b=0.75, k3=8) {
+function bm25f(docs, query,fieldsWeights,  N, avdl, k1=1.2, b=0.75, k3=8) {
   let scores = [];
-  let fields = ['title', 'body'];
-  for (const pastIssue of existingIssues) {
-    scores.push({
-      score: bm25f(pastIssue, currentIssue, k1, b, k3, fields),
-      issue: pastIssue 
-    });
-  }
+  let queryTerms = query.split(" ");
+
+  docs.forEach(doc => {
+      let score = 0;
+
+      queryTerms.forEach(term => {
+          let fieldScores = [];
+          for (let field in fieldsWeights) {
+              if (fieldsWeights.hasOwnProperty(field) && doc.hasOwnProperty(field)) {
+                  let tf = doc[field].split(" ").filter(word => word === term).length;
+                  let n = docs.filter(d => d[field].split(" ").includes(term)).length;
+                  let idf = Math.log((N - n + 0.5) / (n + 0.5));
+                  let fieldLength = doc[field].split(" ").length;
+                  let fieldScore = (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * (fieldLength / avdl))) * idf;
+                  fieldScores.push({field: field, score: fieldScore});
+              }
+          }
+          if (fieldScores.length > 0) {
+              fieldScores.sort((a, b) => b.score - a.score);
+              score += fieldScores[0].score * fieldsWeights[fieldScores[0].field];
+          }
+      });
+
+      score = score * (k3 + 1) / (k3 + 1);
+      scores.push({issue: doc, score: score});
+  });
   console.log('***' * 10);
   console.log(scores);
   console.log('***' * 10);
-  
   scores.sort((a, b) => b.score - a.score);
-  // return scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue);
-  // return {
-    // scores: scores.slice(0, Math.min(5, existingIssues.length)),
-    // mostSimilarIssues: scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue)
-  // };
-  return scores.slice(0, Math.min(5, existingIssues.length));
+  return scores.slice(0, Math.min(5, N));
 }
+
+
+// function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b=0.75, k3=8) {
+//   let scores = [];
+//   let fields = ['title', 'body'];
+//   for (const pastIssue of existingIssues) {
+//     scores.push({
+//       score: bm25f(pastIssue, currentIssue, k1, b, k3, fields),
+//       issue: pastIssue 
+//     });
+//   }
+//   console.log('***' * 10);
+//   console.log(scores);
+//   console.log('***' * 10);
+
+//   scores.sort((a, b) => b.score - a.score);
+//   // return scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue);
+//   // return {
+//     // scores: scores.slice(0, Math.min(5, existingIssues.length)),
+//     // mostSimilarIssues: scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue)
+//   // };
+//   return scores.slice(0, Math.min(5, existingIssues.length));
+// }
 
 
 
@@ -212,5 +266,6 @@ module.exports = {
   removeEmoji,
   checkMentioned,
   bm25f,
-  findMostSimilarWithCurrentIssue
+  getNandAvdl
+  // findMostSimilarWithCurrentIssue
 };

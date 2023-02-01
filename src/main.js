@@ -17,6 +17,7 @@ const {
 const { dealStringToArr } = require('actions-util');
 
 const { compare } = require('compare-similarity');
+const { bm25f } = require('../dist');
 
 // ************************************************
 const context = github.context;
@@ -84,7 +85,16 @@ async function run() {
         }
       });
 
-      const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+      const fieldWeights = {
+        'title': 3,
+        'body': 1
+      };
+      const returned = getNandAvdl(existingIssues, fieldWeights);
+      const n = returned.n;
+      const avdl = returned.avdl;
+
+      // const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+      const mostSimilar = bm25f(existingIssues, formatT, fieldWeights, n, avdl)
       console.log(mostSimilar);
 
       if (mostSimilar) {
