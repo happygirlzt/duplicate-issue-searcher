@@ -265,7 +265,7 @@ module.exports = {
   doRemoveIssueComment,
   removeEmoji,
   checkMentioned,
-  bm25f,
-  getNandAvdl
+  getNandAvdl,
+  bm25f
   // findMostSimilarWithCurrentIssue
 };
