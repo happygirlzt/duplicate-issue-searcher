@@ -24,7 +24,7 @@ async function run() {
   try {
     const { owner, repo } = context.repo;
 
-    const FIXCOMMENT = `<!-- Created by actions-cool/issues-similarity-analysis. Do not remove. -->`;
+    const FIXCOMMENT = `<!-- Created by duplicate issue searcher. Do not remove. -->`;
 
     if (context.eventName == 'issues') {
       const { number, title, body } = context.payload.issue;

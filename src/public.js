@@ -67,7 +67,7 @@ async function doIssueComment(owner, repo, number, issues, commentTitle, comment
   const showFooter = core.getInput('show-footer') || 'true';
   const footer =
     showFooter == 'true'
-      ? `<sub>🤖 By [issues-similarity-analysis](https://github.com/actions-cool/issues-similarity-analysis)</sub>
+      ? `<sub>🤖 Present by [duplicate issue searcher](https://github.com/happygirlzt/duplicate-issue-searcher)</sub>
 
 ${FIXCOMMENT}
 `
