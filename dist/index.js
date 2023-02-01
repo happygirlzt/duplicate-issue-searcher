@@ -12405,10 +12405,11 @@ async function run() {
 
       if (mostSimilar) {
         for (const returnedIssue of mostSimilar) {
+          console.log('returnedIssue', returnedIssue);
           result.push({
             number: returnedIssue.number,
             title: returnedIssue.title,
-            similarity: Number(returnedIssue.similarity.toFixed(2)),
+            similarity: Number(returnedIssue.score.toFixed(2)),
           });
         }
       }
