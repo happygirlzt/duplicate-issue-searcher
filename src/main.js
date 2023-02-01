@@ -62,8 +62,12 @@ async function run() {
       issues.forEach(issue => {
         if (issue.pull_request === undefined && issue.number !== number) {
           const formatIssT = formatTitle(dealStringToArr(titleExcludes), issue.title);
-          if (formatIssT.length > 0) {
+          if (formatIssT.length > 0) {            
+        
             existingIssues.push(issue);
+            console.log('issue title', issue.title);
+            console.log('issue number', issue.number);
+            console.log('issue body', issue.body);
             // const similarity = compare(formatIssT, formatT);
             // if (
             //   similarity &&
