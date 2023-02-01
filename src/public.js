@@ -189,12 +189,19 @@ function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b
   for (const pastIssue of existingIssues) {
     scores.push({
       score: bm25f(pastIssue, currentIssue, k1, b, k3, fields),
-      pastIssue
+      issue_title: pastIssue.title,
+      issue_number: pastIssue.number,
+      issue_body: pastIssue.body
     });
   }
 
   scores.sort((a, b) => b.score - a.score);
-  return scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue);
+  // return scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue);
+  // return {
+    // scores: scores.slice(0, Math.min(5, existingIssues.length)),
+    // mostSimilarIssues: scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue)
+  // };
+  return scores.slice(0, Math.min(5, existingIssues.length));
 }
 
 

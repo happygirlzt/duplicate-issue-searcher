@@ -88,7 +88,8 @@ async function run() {
 
       if (mostSimilar) {
         for (const returnedIssue of mostSimilar) {
-          console.log('returnedIssue', returnedIssue);
+          console.log('returnedIssue', returnedIssue.score);
+          console.log('returnedIssue title ', returnedIssue.title);
           result.push({
             number: returnedIssue.number,
             title: returnedIssue.title,
