@@ -12118,7 +12118,7 @@ function findMostSimilarWithCurrentIssue(existingIssues, currentIssue, k1=1.2, b
   }
 
   scores.sort((a, b) => b.score - a.score);
-  return scores.slice(0, Math.min(5, corpus.length)).map(score => score.pastIssue);
+  return scores.slice(0, Math.min(5, existingIssues.length)).map(score => score.pastIssue);
 }
 
 
