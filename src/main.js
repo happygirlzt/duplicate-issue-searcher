@@ -81,12 +81,13 @@ async function run() {
       });
 
       const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+
       if (mostSimilar) {
-        for (let i = 0; i < mostSimilar.length; i++) {
+        for (const returnedIssue of mostSimilar) {
           result.push({
-            number: mostSimilar[i].number,
-            title: mostSimilar[i].title,
-            similarity: Number(mostSimilar[i].similarity.toFixed(2)),
+            number: returnedIssue.number,
+            title: returnedIssue.title,
+            similarity: Number(returnedIssue.similarity.toFixed(2)),
           });
         }
       }

@@ -12390,8 +12390,9 @@ async function run() {
       });
 
       const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+
       if (mostSimilar) {
-        for (let i = 0; i < mostSimilar.length; i++) {
+        for (const returnedIssu of mostSimilar) {
           result.push({
             number: mostSimilar[i].number,
             title: mostSimilar[i].title,
