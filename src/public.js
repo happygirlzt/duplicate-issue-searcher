@@ -211,7 +211,7 @@ function my_bm25f(docs, query, fieldsWeights, N, avdl, k1=1.2, b=0.75, k3=8) {
           let fieldScores = [];
           for (let field in fieldsWeights) {
             if (fieldsWeights.hasOwnProperty(field) && doc.hasOwnProperty(field)) {
-                  if (!doc[field] || typeof doc[field] !== "string") {
+                  if (!doc[field] || doc == null || typeof doc[field] !== "string") {
                     doc[field] = '';
                     continue;
                   }
