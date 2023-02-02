@@ -97,10 +97,11 @@ async function run() {
       let fields = ['title', 'body'];
 
       existingIssues.forEach(doc => {
-          console.log("doc: ", doc);
+        console.log("doc field ", doc[field]);
+        console.log("doc field type ", typeof doc[field]);
           let length = 0;
           for (const field in fields) {
-            if (!doc[field] || doc == null ||
+            if (!doc[field] || doc[field] == null ||
               typeof doc[field] !== "string" || 
               doc[field] === null || typeof doc[field] === "undefined") {
               doc[field] = '';
