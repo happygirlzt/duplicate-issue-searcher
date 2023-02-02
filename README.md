@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: analysis
-        uses: happygirlzt/duplicate-issue-searcher@the-latest-version
+        uses: happygirlzt/duplicate-issue-searcher@main
         with:
           filter-threshold: 0.5
           title-excludes: 'bug, not, 1234'
