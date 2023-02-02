@@ -98,7 +98,7 @@ async function run() {
 
       existingIssues.forEach(doc => {        
           let length = 0;
-        for (const field in fields) {
+          for (const field of fields) {
           console.log("field ", field);
           console.log("doc field ", doc.field);
           console.log("doc field type ", typeof doc.field);
