@@ -111,15 +111,17 @@ async function run() {
       });
 
       let avdl = sumOfLengths / n;
+      console.log("formatT", formatT)
 
       const mostSimilar = my_bm25f(existingIssues, formatT, fieldWeights, n, avdl)
+      console.log("mostSimilar")
       console.log(mostSimilar);
 
       if (mostSimilar) {
         for (const returnedIssue of mostSimilar) {
-          console.log('returnedIssue', returnedIssue);
-          console.log('returnedIssue score', returnedIssue.score);
-          console.log('returnedIssue title ', returnedIssue.issue.title);
+          // console.log('returnedIssue', returnedIssue);
+          // console.log('returnedIssue score', returnedIssue.score);
+          // console.log('returnedIssue title ', returnedIssue.issue.title);
           result.push({
             number: returnedIssue.number,
             title: returnedIssue.title,
