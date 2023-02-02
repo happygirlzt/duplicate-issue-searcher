@@ -12514,11 +12514,18 @@ async function run() {
           // console.log('returnedIssue', returnedIssue);
           // console.log('returnedIssue score', returnedIssue.score);
           // console.log('returnedIssue title ', returnedIssue.issue.title);
-          result.push({
-            number: returnedIssue.number,
-            title: returnedIssue.title,
-            similarity: Number(returnedIssue.score.toFixed(2)),
-          });
+          const similarity = returnedIssue.score;
+          if (
+            similarity &&
+            similarity >= filterThreshold &&
+            checkMentioned(showMentioned, body, issue.number, owner, repo)
+          ) {
+            result.push({
+              number: returnedIssue.number,
+              title: returnedIssue.title,
+              similarity: Number(returnedIssue.score.toFixed(2)),
+            });
+          }
         }
       }
 
