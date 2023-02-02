@@ -12124,7 +12124,7 @@ function checkMentioned(showMentioned, body, number, owner, repo) {
 //   return {N: N, avdl: avdl};
 // }
 
-function my_bm25f(docs, query,fieldsWeights,  N, avdl, k1=1.2, b=0.75, k3=8) {
+function my_bm25f(docs, query, fieldsWeights, N, avdl, k1=1.2, b=0.75, k3=8) {
   let scores = [];
   let queryTerms = query.split(" ");
 
@@ -12134,7 +12134,12 @@ function my_bm25f(docs, query,fieldsWeights,  N, avdl, k1=1.2, b=0.75, k3=8) {
       queryTerms.forEach(term => {
           let fieldScores = [];
           for (let field in fieldsWeights) {
-              if (fieldsWeights.hasOwnProperty(field) && doc.hasOwnProperty(field)) {
+            if (fieldsWeights.hasOwnProperty(field) && doc.hasOwnProperty(field)) {
+                  if (doc[field] === null || doc[field] === undefined
+                  || !doc[field]) {
+                    doc[field] = '';
+                    continue;
+                  }
                   let tf = doc[field].split(" ").filter(word => word === term).length;
                   let n = docs.filter(d => d[field].split(" ").includes(term)).length;
                   let idf = Math.log((N - n + 0.5) / (n + 0.5));
