@@ -117,9 +117,6 @@ async function run() {
 
       if (mostSimilar) {
         for (const returnedIssue of mostSimilar) {
-          // console.log('returnedIssue', returnedIssue);
-          // console.log('returnedIssue score', returnedIssue.score);
-          // console.log('returnedIssue title ', returnedIssue.issue.title);
           const similarity = returnedIssue.score;
           if (
             similarity &&
@@ -134,10 +131,10 @@ async function run() {
           }
         }
       }
-
       core.info(`[Action][filter-issues][length: ${result.length}]`);
       if (result.length > 0) {
         result.sort((a, b) => b.similarity - a.similarity);
+        console.log('try to comment===========')
         await doIssueComment(owner, repo, number, result, commentTitle, commentBody, FIXCOMMENT);
       } else {
         await doRemoveIssueComment(owner, repo, number, FIXCOMMENT);

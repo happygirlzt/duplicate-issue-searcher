@@ -31,6 +31,9 @@
 
   async function doIssueComment(owner, repo, number, issues, commentTitle, commentBody, FIXCOMMENT) {
     const comments = await listComments(owner, repo, number);
+    console.log("***************")
+    console.log('comments', comments)
+    console.log("***************")
     const filterComments = [];
     comments.forEach(comment => {
       if (comment.body.includes(FIXCOMMENT)) {
