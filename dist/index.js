@@ -12494,6 +12494,7 @@ async function run() {
       let fields = ['title', 'body'];
 
       existingIssues.forEach(doc => {
+          console.log("doc: ", doc);
           let length = 0;
           for (const field in fields) {
             if (!doc[field] || doc == null ||
@@ -12503,6 +12504,7 @@ async function run() {
               continue;
             }
             length += doc[field].split(" ").length;
+            console.log("doc length: ", length);
           }
           sumOfLengths += length;
       });
