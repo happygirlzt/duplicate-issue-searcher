@@ -124,11 +124,11 @@ async function run() {
           if (
             similarity &&
             similarity >= filterThreshold &&
-            checkMentioned(showMentioned, body, issue.number, owner, repo)
+            checkMentioned(showMentioned, body, returnedIssue.issue.number, owner, repo)
           ) {
             result.push({
-              number: returnedIssue.number,
-              title: returnedIssue.title,
+              number: returnedIssue.issue.number,
+              title: returnedIssue.issue.title,
               similarity: Number(returnedIssue.score.toFixed(2)),
             });
           }
