@@ -111,10 +111,10 @@ async function run() {
       });
 
       let avdl = sumOfLengths / n;
-      console.log("formatT", formatT)
+      console.log("formatT:", formatT);
 
       const mostSimilar = my_bm25f(existingIssues, formatT, fieldWeights, n, avdl)
-      console.log("mostSimilar")
+      console.log("mostSimilar");
       console.log(mostSimilar);
 
       if (mostSimilar) {
