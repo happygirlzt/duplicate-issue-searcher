@@ -99,15 +99,16 @@ async function run() {
       existingIssues.forEach(doc => {        
           let length = 0;
         for (const field in fields) {
-          console.log("doc field ", doc[field]);
-          console.log("doc field type ", typeof doc[field]);
-            if (!doc[field] || doc[field] == null ||
-              typeof doc[field] !== "string" || 
-              doc[field] === null || typeof doc[field] === "undefined") {
-              doc[field] = '';
+          console.log("field ", field);
+          console.log("doc field ", doc.field);
+          console.log("doc field type ", typeof doc.field);
+            if (!doc.field || doc.field == null ||
+              typeof doc.field !== "string" || 
+              doc.field === null || typeof doc.field=== "undefined") {
+                doc.field = '';
               continue;
             }
-            length += doc[field].split(" ").length;
+            length += doc.field.split(" ").length;
             console.log("doc length: ", length);
           }
           sumOfLengths += length;
