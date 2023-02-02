@@ -179,26 +179,26 @@ function checkMentioned(showMentioned, body, number, owner, repo) {
 //   return score;
 // }
 
-function getNandAvdl(docs) {
-  let N = docs.length;
-  let sumOfLengths = 0;
+// function getNandAvdl(docs) {
+//   let N = docs.length;
+//   let sumOfLengths = 0;
 
-  docs.forEach(doc => {
-      let length = 0;
-    for (let field in doc) {
-      if (!doc[field]) {
-        doc[field] = '';
-        }
-          if (doc.hasOwnProperty(field)) {
-              length += doc[field].split(" ").length;
-          }
-      }
-      sumOfLengths += length;
-  });
+//   docs.forEach(doc => {
+//       let length = 0;
+//     for (let field in doc) {
+//       if (!doc[field]) {
+//         doc[field] = '';
+//         }
+//           if (doc.hasOwnProperty(field)) {
+//               length += doc[field].split(" ").length;
+//           }
+//       }
+//       sumOfLengths += length;
+//   });
 
-  let avdl = sumOfLengths / N;
-  return {N: N, avdl: avdl};
-}
+//   let avdl = sumOfLengths / N;
+//   return {N: N, avdl: avdl};
+// }
 
 function my_bm25f(docs, query,fieldsWeights,  N, avdl, k1=1.2, b=0.75, k3=8) {
   let scores = [];
@@ -268,7 +268,7 @@ module.exports = {
   doRemoveIssueComment,
   removeEmoji,
   checkMentioned,
-  getNandAvdl,
+  // getNandAvdl,
   my_bm25f
   // findMostSimilarWithCurrentIssue
 };

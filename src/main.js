@@ -11,7 +11,6 @@ const {
   doIssueComment,
   checkMentioned,
   doRemoveIssueComment,
-  getNandAvdl,
   my_bm25f
   // findMostSimilarWithCurrentIssue
 } = require('./public');
@@ -92,11 +91,28 @@ async function run() {
         'body': 1
       };
 
-      const returned = getNandAvdl(existingIssues);
-      const n = returned.n;
-      const avdl = returned.avdl;
+      // const returned = getNandAvdl(existingIssues);
+      // const n = returned.N;
+      // const avdl = returned.avdl;
 
       // const mostSimilar = findMostSimilarWithCurrentIssue(existingIssues, formatT);
+      let n = existingIssues.length;
+      let sumOfLengths = 0;
+      let fields = ['title', 'body'];
+
+      existingIssues.forEach(doc => {
+          let length = 0;
+          for (const field in fields) {
+            if (!doc[field]) {
+              doc[field] = '';
+            }
+            length += doc[field].split(" ").length;
+          }
+          sumOfLengths += length;
+      });
+
+      let avdl = sumOfLengths / n;
+
       const mostSimilar = my_bm25f(existingIssues, formatT, fieldWeights, n, avdl)
       console.log(mostSimilar);
 
