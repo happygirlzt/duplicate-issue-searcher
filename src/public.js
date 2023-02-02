@@ -203,8 +203,6 @@
   function my_bm25f(docs, query, fieldsWeights, N, avdl, k1=1.2, b=0.75, k3=8) {
     let scores = [];
     let queryTerms = query.split(" ");
-    console.log('queryTerms: ', queryTerms);
-    console.log('****' * 10);
 
     docs.forEach(doc => {
         let score = 0;
@@ -218,15 +216,14 @@
                       doc[field] = '';
                       continue;
                     }
-                    console.log('doc[field]: ok');
-                    console.log('****' * 10);
+                    console.log("doc[field]: " + doc[field]);
                     let tf = doc[field].split(" ").filter(word => word === term).length;
-                    console.log('tf doc[field]: ok');
                     let n = docs.filter(d => d[field].split(" ").includes(term)).length;
                     let idf = Math.log((N - n + 0.5) / (n + 0.5));
                     let fieldLength = doc[field].split(" ").length;
                     let fieldScore = (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * (fieldLength / avdl))) * idf;
-                    fieldScores.push({field: field, score: fieldScore});
+                    fieldScores.push({ field: field, score: fieldScore });
+                    console.log("fieldScore: " + fieldScore);
                 }
             }
             if (fieldScores.length > 0) {

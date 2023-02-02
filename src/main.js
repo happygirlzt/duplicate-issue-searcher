@@ -99,9 +99,6 @@ async function run() {
       existingIssues.forEach(doc => {        
           let length = 0;
           for (const field of fields) {
-          console.log("field ", field);
-          console.log("doc field ", doc[field]);
-          console.log("doc field type ", typeof doc[field]);
             if (!doc[field] || doc[field] == null ||
               typeof doc[field] !== "string" || 
               doc[field] === null || typeof doc[field]=== "undefined") {
@@ -109,14 +106,11 @@ async function run() {
               continue;
             }
             length += doc[field].split(" ").length;
-            console.log("doc length: ", length);
           }
           sumOfLengths += length;
       });
 
       let avdl = sumOfLengths / n;
-      console.log("avdl: ", avdl);
-
       const mostSimilar = my_bm25f(existingIssues, formatT, fieldWeights, n, avdl)
       console.log("mostSimilar");
       console.log(mostSimilar);

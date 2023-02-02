@@ -12127,8 +12127,6 @@ function wrappy (fn, cb) {
   function my_bm25f(docs, query, fieldsWeights, N, avdl, k1=1.2, b=0.75, k3=8) {
     let scores = [];
     let queryTerms = query.split(" ");
-    console.log('queryTerms: ', queryTerms);
-    console.log('****' * 10);
 
     docs.forEach(doc => {
         let score = 0;
@@ -12142,15 +12140,14 @@ function wrappy (fn, cb) {
                       doc[field] = '';
                       continue;
                     }
-                    console.log('doc[field]: ok');
-                    console.log('****' * 10);
+                    console.log("doc[field]: " + doc[field]);
                     let tf = doc[field].split(" ").filter(word => word === term).length;
-                    console.log('tf doc[field]: ok');
                     let n = docs.filter(d => d[field].split(" ").includes(term)).length;
                     let idf = Math.log((N - n + 0.5) / (n + 0.5));
                     let fieldLength = doc[field].split(" ").length;
                     let fieldScore = (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * (fieldLength / avdl))) * idf;
-                    fieldScores.push({field: field, score: fieldScore});
+                    fieldScores.push({ field: field, score: fieldScore });
+                    console.log("fieldScore: " + fieldScore);
                 }
             }
             if (fieldScores.length > 0) {
@@ -12496,9 +12493,6 @@ async function run() {
       existingIssues.forEach(doc => {        
           let length = 0;
           for (const field of fields) {
-          console.log("field ", field);
-          console.log("doc field ", doc[field]);
-          console.log("doc field type ", typeof doc[field]);
             if (!doc[field] || doc[field] == null ||
               typeof doc[field] !== "string" || 
               doc[field] === null || typeof doc[field]=== "undefined") {
@@ -12506,14 +12500,11 @@ async function run() {
               continue;
             }
             length += doc[field].split(" ").length;
-            console.log("doc length: ", length);
           }
           sumOfLengths += length;
       });
 
       let avdl = sumOfLengths / n;
-      console.log("avdl: ", avdl);
-
       const mostSimilar = my_bm25f(existingIssues, formatT, fieldWeights, n, avdl)
       console.log("mostSimilar");
       console.log(mostSimilar);
