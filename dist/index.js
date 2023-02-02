@@ -11990,7 +11990,7 @@ function wrappy (fn, cb) {
   `;
       }
     });
-
+    console.log("***************can reach here by making the comments***************")
     const showFooter = core.getInput('show-footer') || 'true';
     const footer =
       showFooter == 'true'
