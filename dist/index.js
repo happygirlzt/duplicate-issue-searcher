@@ -12490,8 +12490,9 @@ async function run() {
       existingIssues.forEach(doc => {
           let length = 0;
           for (const field in fields) {
-            if (!doc[field]) {
+            if (doc[field] === null) {
               doc[field] = '';
+              continue;
             }
             length += doc[field].split(" ").length;
           }
